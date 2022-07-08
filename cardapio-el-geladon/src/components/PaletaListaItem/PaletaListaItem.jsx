@@ -2,12 +2,18 @@ import "../PaletaListaItem/PaletaListaItem";
 import React from "react";
 import "../PaletaListaItem/PaletaListaItem.css";
 
+/*Para a configuração de fechar o modal, aqui foi adicionado o parâmetro clickItem(função que receberá paleta.id 
+  como parâmetro) na função PaletaListaItem() e será chamada no click da div PaletaListaItem. Como a essa parte tem 
+  alguns botões, será colocado neles a função stopPropagation()
+*/
+
 function PaletaListaItem({
   paleta,
   quantidadeSelecionada,
   index,
   adicionarItem,
   removerItem,
+  clickItem,
 }) {
   const badgeCounter = (canRender, index) => {
     return (
@@ -25,7 +31,13 @@ function PaletaListaItem({
   const removeButton = (canRender, index) => (
     <>
       {Boolean(canRender) && (
-        <button className="Acoes__remover" onClick={() => removerItem(index)}>
+        <button
+          className="Acoes__remover"
+          onClick={(event) => {
+            event.stopPropagation();
+            removerItem(index);
+          }}
+        >
           Remover
         </button>
       )}
@@ -33,7 +45,7 @@ function PaletaListaItem({
   );
 
   return (
-    <div className="PaletaListaItem">
+    <div className="PaletaListaItem" onClick={() => clickItem(paleta.id)}>
       {badgeCounter(quantidadeSelecionada, index)}
       <div>
         <div className="PaletaListaItem__titulo">{paleta.titulo}</div>
@@ -46,7 +58,7 @@ function PaletaListaItem({
             className={`Acoes__adicionar ${
               !quantidadeSelecionada && "Acoes__adicionar-_preencher"
             }`}
-            onClick={() => adicionarItem(index)}
+            onClick={(event) => {event.stopPropagation(); adicionarItem(index);}}
           >
             Adicionar
           </button>
