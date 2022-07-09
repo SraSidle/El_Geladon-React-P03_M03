@@ -16,9 +16,12 @@ o useEffect tem dois parâmetros, primeiro uma função, e o segundo, um array
  useState(false)=> nessa condição, o modal não abre, sendo necessário que haja algum evento para inverter esse booleano.
 paletaModal é o state que inicia false <PaletaDetalhesModal /> é o componente que se deseja renderizar. então para que o modal abra,
 ambos devem ser verdadeiros.
+
+Aqui, a função PaletaLista recebe o parâmetro "paletaCriada", que será um valor utilizado no useEffect. Quando for verdadeiro
+(ouver uma nova paleta) será acionada a função addPaletainList que recebe a nova paleta e adiciona na lista e altera o state
  */
 
-function PaletaLista() {
+function PaletaLista({paletaCriada}) {
   const [paletas, setPaletas] = useState([]); //pq aqui é com colchetes e o de baixo é com chaves?
   const [paletaSelecionada, setPaletaSelecionada] = useState({}); // tinha um erro aqui, estava entre chaves e não entre colchetes
   const [paletaModal, setPaletaModal] = useState(false);
@@ -56,6 +59,15 @@ function PaletaLista() {
     getLista();
   }, []); //Esse array deve ser colocado, senão a aplicação rodará em loop infinito
 
+  const addPaletainList = (paleta) => {
+    const list = [...paletas, paleta]
+    setPaletas(list)
+  }
+
+  useEffect(() => {
+    if(paletaCriada) addPaletainList(paletaCriada)
+}, [paletaCriada]);
+
   return (
     <div className="PaletaLista">
       {paletas.map((paleta, index) => (
@@ -71,7 +83,6 @@ function PaletaLista() {
           } /*Quando aqui era por getAll, o state era setPaletas(response), mas como está por id, a sintaxe é essa */
         />
       ))}
-      ;
       {paletaModal && (
         <PaletaDetalhesModal
           paleta={paletaModal}
