@@ -21,7 +21,7 @@ Aqui, a função PaletaLista recebe o parâmetro "paletaCriada", que será um va
 (ouver uma nova paleta) será acionada a função addPaletainList que recebe a nova paleta e adiciona na lista e altera o state
  */
 
-function PaletaLista({paletaCriada}) {
+function PaletaLista({paletaCriada, mode}) {
   const [paletas, setPaletas] = useState([]); //pq aqui é com colchetes e o de baixo é com chaves?
   const [paletaSelecionada, setPaletaSelecionada] = useState({}); // tinha um erro aqui, estava entre chaves e não entre colchetes
   const [paletaModal, setPaletaModal] = useState(false);
@@ -72,6 +72,7 @@ function PaletaLista({paletaCriada}) {
     <div className="PaletaLista">
       {paletas.map((paleta, index) => (
         <PaletaListaItem
+          mode={mode}
           key={`PaletaListaItem-${index}`}
           paleta={paleta}
           quantidadeSelecionada={paletaSelecionada[index]}
