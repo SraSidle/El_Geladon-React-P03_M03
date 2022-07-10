@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Modal from "../Modal/Modal";
-import "./AdicionaPaletaModal.css";
+import "./AdicionaEditaPaletaModal.css";
 import { PaletaService } from "../../services/PaletaService";
 
 /* Esse arquivo será adicionado no Home.jsx
@@ -26,7 +26,7 @@ O parâmetro "onCreatePaleta" é adicionado aqui, ele receberá o valor response
 valores. Essa alteração deverá ser informada em outro componente: Home.jsx. Nele será adicionado o estado "paletaParaAdicionar"
 */
 
-function AdicionaPaletaModal({ closeModal, onCreatePaleta }) {
+function AdicionaEditaPaletaModal({ closeModal, onCreatePaleta }) {
   const form = {
     preco: "",
     sabor: "",
@@ -164,4 +164,4 @@ function AdicionaPaletaModal({ closeModal, onCreatePaleta }) {
   );
 }
 
-export default AdicionaPaletaModal;
+export default AdicionaEditaPaletaModal;
