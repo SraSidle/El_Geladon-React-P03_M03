@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./PaletaLista.css";
 import PaletaListaItem from "../PaletaListaItem/PaletaListaItem";
 import { PaletaService } from "../../services/PaletaService";
 import PaletaDetalhesModal from "../PaletaDetalhesModal/PaletaDetalhesModal";
+import { ActionMode } from "../../constants/index";
 /* Hooks = useState e useEffect
 useState controla o estado da aplicação, e o useEffect é responsável por controlar o ciclo de vida da aplicação(todos os estados)
 o useState começa com um array vazio, então, para mudar isso, será necessário criar uma função assíncrona, que 
@@ -19,9 +20,13 @@ ambos devem ser verdadeiros.
 
 Aqui, a função PaletaLista recebe o parâmetro "paletaCriada", que será um valor utilizado no useEffect. Quando for verdadeiro
 (ouver uma nova paleta) será acionada a função addPaletainList que recebe a nova paleta e adiciona na lista e altera o state
- */
+ 
+o Mapper fo criado para transitar nos modos (Normal,update, delete) e eecuta a ação condizente com o modo
 
-function PaletaLista({paletaCriada, mode}) {
+useCallback. Ele é necessário para indicarmos quando há um hook de useState sendo referenciado dentro de um hook de useEffect.
+*/
+
+function PaletaLista({paletaCriada, mode, updatePaleta, deletePaleta}) {
   const [paletas, setPaletas] = useState([]); //pq aqui é com colchetes e o de baixo é com chaves?
   const [paletaSelecionada, setPaletaSelecionada] = useState({}); // tinha um erro aqui, estava entre chaves e não entre colchetes
   const [paletaModal, setPaletaModal] = useState(false);
@@ -52,21 +57,34 @@ function PaletaLista({paletaCriada, mode}) {
 
   const getPaletaById = async (paletaId) => {
     const response = await PaletaService.getById(paletaId);
-    setPaletaModal(response);
+     const mapper = {
+      [ActionMode.NORMAL]: () => setPaletaModal(response),
+      [ActionMode.ATUALIZAR]: () => updatePaleta(response),
+      [ActionMode.DELETAR]: () => deletePaleta(response),
+     };
+
+     mapper[mode]();
   };
 
   useEffect(() => {
     getLista();
   }, []); //Esse array deve ser colocado, senão a aplicação rodará em loop infinito
 
-  const addPaletainList = (paleta) => {
-    const list = [...paletas, paleta]
-    setPaletas(list)
-  }
+  const addPaletainList = useCallback(
+    (paleta) => {
+      const list = [...paletas, paleta]
+     setPaletas(list);
+    },
+    [paletas]
+  );
 
   useEffect(() => {
-    if(paletaCriada) addPaletainList(paletaCriada)
-}, [paletaCriada]);
+    if(paletaCriada &&
+    !paletas.map(({id}) => id).includes(paletaCriada.id)
+    ) {
+      addPaletainList(paletaCriada)
+    }
+}, [addPaletainList, paletaCriada, paletas]);
 
   return (
     <div className="PaletaLista">

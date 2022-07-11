@@ -45,12 +45,11 @@ function AdicionaEditaPaletaModal({ closeModal, onCreatePaleta }) {
 
   const canDisableSendButton = () => {
     const response = !Boolean(
-      newPaleta.preco.length  &&
+        newPaleta.preco.length  &&
         newPaleta.sabor.length > 2 &&
         newPaleta.descricao.length > 9 &&
         newPaleta.foto.length
     );
-
     setCanDisable(response);
   };
 
