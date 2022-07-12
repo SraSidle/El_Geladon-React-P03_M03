@@ -53,6 +53,14 @@ function Navbar({ createPaleta, updatePaleta, mode }) {
               alt="Editar Paleta"
             />
           </button>
+          <button
+  type="button"
+  className={`Opcoes__paleta Paleta ${mode === ActionMode.DELETAR && 'Paleta--deletar'}`}
+  onClick={() => deletePaleta()}>
+
+  <img src={sacola} width="40px" className="Paleta__icone" alt="Deletar paleta" />
+
+</button>
           <div className="Opcoes__sacola Sacola">
             <img
               src={sacola}

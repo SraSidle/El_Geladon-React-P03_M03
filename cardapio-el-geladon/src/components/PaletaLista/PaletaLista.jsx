@@ -26,7 +26,14 @@ o Mapper fo criado para transitar nos modos (Normal,update, delete) e eecuta a a
 useCallback. Ele é necessário para indicarmos quando há um hook de useState sendo referenciado dentro de um hook de useEffect.
 */
 
-function PaletaLista({paletaCriada, mode, updatePaleta, deletePaleta}) {
+function PaletaLista({
+  paletaCriada,
+  mode,
+  updatePaleta,
+  deletePaleta,
+  paletaEditada,
+  paletaRemovida,
+}) {
   const [paletas, setPaletas] = useState([]); //pq aqui é com colchetes e o de baixo é com chaves?
   const [paletaSelecionada, setPaletaSelecionada] = useState({}); // tinha um erro aqui, estava entre chaves e não entre colchetes
   const [paletaModal, setPaletaModal] = useState(false);
@@ -57,40 +64,42 @@ function PaletaLista({paletaCriada, mode, updatePaleta, deletePaleta}) {
 
   const getPaletaById = async (paletaId) => {
     const response = await PaletaService.getById(paletaId);
-     const mapper = {
+    const mapper = {
       [ActionMode.NORMAL]: () => setPaletaModal(response),
       [ActionMode.ATUALIZAR]: () => updatePaleta(response),
       [ActionMode.DELETAR]: () => deletePaleta(response),
-     };
+    };
 
-     mapper[mode]();
+    mapper[mode]();
   };
 
   useEffect(() => {
     getLista();
-  }, []); //Esse array deve ser colocado, senão a aplicação rodará em loop infinito
+  }, [paletaCriada, paletaRemovida]); //Esse array deve ser colocado, senão a aplicação rodará em loop infinito
 
   const addPaletainList = useCallback(
     (paleta) => {
-      const list = [...paletas, paleta]
-     setPaletas(list);
+      const list = [...paletas, paleta];
+      setPaletas(list);
     },
     [paletas]
   );
 
   useEffect(() => {
-    if(paletaCriada &&
-    !paletas.map(({id}) => id).includes(paletaCriada.id)
+    if (
+      paletaCriada &&
+      !paletas.map(({ id }) => id).includes(paletaCriada.id)
     ) {
-      addPaletainList(paletaCriada)
+      addPaletainList(paletaCriada);
     }
-}, [addPaletainList, paletaCriada, paletas]);
+  }, [addPaletainList, paletaCriada, paletas]);
 
   return (
     <div className="PaletaLista">
       {paletas.map((paleta, index) => (
         <PaletaListaItem
           mode={mode}
+          paletaEditada={paletaEditada}
           key={`PaletaListaItem-${index}`}
           paleta={paleta}
           quantidadeSelecionada={paletaSelecionada[index]}

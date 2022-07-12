@@ -44,17 +44,28 @@ export const PaletaService = {
     fetch(Api.paletaLista(), { method: "GET" }).then(parseTransformLista),
   getById: (id) =>
     fetch(Api.paletaById(id), { method: "GET" }).then(parseTransformItem),
-  create: (paleta) => /*paleta será o parâmetro indicado para que o cadastro ocorra*/
+  create: (
+    paleta /*paleta será o parâmetro indicado para que o cadastro ocorra*/
+  ) =>
     fetch(Api.createPaleta(), {
-      method: "POST",/*Além de informar o methodo: POST, é preciso também, dizer como será o envio dessas informações serão emviadas */
-      body: JSON.stringify(paleta), /* e esse envio será via body "corpo da requisição" via json*/
-      mode: "cors", /*cors é uma configuração que precisa ser adicionada para que o backend considere essa requisição segura e não a bloqueie*/
-      headers: { /*headers são a forma como as informações serão enviadas(reafirmação de body) */
+      method:
+        "POST" /*Além de informar o methodo: POST, é preciso também, dizer como será o envio dessas informações serão emviadas */,
+      body: JSON.stringify(
+        paleta
+      ) /* e esse envio será via body "corpo da requisição" via json*/,
+      mode: "cors" /*cors é uma configuração que precisa ser adicionada para que o backend considere essa requisição segura e não a bloqueie*/,
+      headers: {
+        /*headers são a forma como as informações serão enviadas(reafirmação de body) */
         "Content-Type": "application/json",
       },
     }).then(parseTransformItem),
-  updateById: (id) =>
-    fetch(Api.updatePaletaById(id), { method: "PUT" }).then(parseResponse),
+  updateById: (id, paleta) =>
+    fetch(Api.updatePaletaById(id), {
+      method: "PUT",
+      body: JSON.stringify(paleta),
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+    }).then(parseResponse),
   deleteById: (id) =>
     fetch(Api.deletePaletaById(id), { method: "DELETE" }).then(parseResponse),
 };

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import "./Home.css";
-import PaletaLista from "../../components/PaletaLista/PaletaLista"; //Parece que se vc for citar o elemnto exportado, tem que declará-lo, junto com a exportação
 import Navbar from "../../components/Navbar/Navbar";
-import AdicionaEditaPaletaModal from "../../components/AdicionaEditaPaletaModal/AdicionaEditaPaletaModal";
 import { ActionMode } from "../../constants/index";
+import DeletaPaletaModal from "../../components/DeletaPaletaModal/DeletaPaletaModal";
+import PaletaLista from "../../components/PaletaLista/PaletaLista"; //Parece que se vc for citar o elemnto exportado, tem que declará-lo, junto com a exportação
+import AdicionaEditaPaletaModal from "../../components/AdicionaEditaPaletaModal/AdicionaEditaPaletaModal";
 
 /*Como o AdicionaPaletaModal está aqui, os valores dele serão alterados pelo useState. A function createPaleta é um parâmetro
 do componente Navbar. Ela será acionada pelo botão de adicionar e esse evento transformará o use state em true, que abrirá o
@@ -36,9 +37,13 @@ function Home() {
     setModoAtual(newAction)
   };
 
-  const [updatePaleta, setUpdatePaleta] = useState()
+  const [updatePaleta, setUpdatePaleta] = useState();
 
-  const [deletePaleta, setDeletePaleta] = useState()
+  const [paletaEditada, setPaletaEditada] = useState();
+
+  const [deletePaleta, setDeletePaleta] = useState();
+
+  const [paletaRemovida, setPaletaRemovida] = useState();
 
   const handleDeletePaleta = (paletaToDelete) => {
     setDeletePaleta(paletaToDelete);
@@ -54,7 +59,9 @@ function Home() {
     setPaletaParaAdicionar();
     setDeletePaleta();
     setUpdatePaleta();
+    setModoAtual(ActionMode.NORMAL);
   }
+
 
   return (
     <div className="Home">
@@ -62,6 +69,7 @@ function Home() {
         mode={modoAtual}
         createPaleta={() => setCanShowAddDetalhes(true)}
         updatePaleta={() => handleAction(ActionMode.ATUALIZAR)}
+        deletePaleta={() => handleAction(ActionMode.DELETAR)}
       />
       <div className="Home__container">
         <PaletaLista
@@ -69,15 +77,26 @@ function Home() {
         paletaCriada={paletaParaAdicionar} 
         deletePaleta={handleDeletePaleta}
         updatePaleta={handleUpdatePaleta}
+        paletaRemovida={paletaRemovida}
         />
         {canShowAddDetalhes && (
           <AdicionaEditaPaletaModal
             mode={modoAtual}
             paletaToUpdate={paletaParaAdicionar}
+            onUpdatePaleta={(paleta) => setPaletaEditada(paleta)}
             closeModal={handleCloseModal}
             onCreatePaleta={(paleta) => setPaletaParaAdicionar(paleta)}
           />
         )}
+
+{
+  deletePaleta &&
+  <DeletaPaletaModal
+    paletaParaDeletar={deletePaleta}
+    closeModal={handleCloseModal}
+    onDeletePaleta={(paleta) => setPaletaRemovida(paleta)}
+    />
+}
       </div>
     </div>
   );
